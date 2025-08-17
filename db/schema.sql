@@ -4,7 +4,7 @@ USE `suites_db`;
 --
 -- Host: localhost    Database: suites_db
 -- ------------------------------------------------------
--- Server version	8.0.37
+-- Server version	8.4.6
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -32,9 +32,10 @@ CREATE TABLE `benchmark` (
   `text_description` text,
   `file_hash` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`benchmark_id`),
-  KEY `suite_id` (`suite_id`),
-  CONSTRAINT `benchmark_ibfk_1` FOREIGN KEY (`suite_id`) REFERENCES `benchmarksuite` (`suite_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `uk_benchmark_suite_name` (`suite_id`,`name`),
+  KEY `idx_benchmark_suite` (`suite_id`),
+  CONSTRAINT `fk_benchmark_suite` FOREIGN KEY (`suite_id`) REFERENCES `benchmarksuite` (`suite_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -50,13 +51,14 @@ CREATE TABLE `benchmarksuite` (
   `variation` varchar(50) DEFAULT NULL,
   `url_benchmarks` varchar(255) DEFAULT NULL,
   `url_evaluator` varchar(255) DEFAULT NULL,
-  `fom1` varchar(50) DEFAULT NULL,
-  `fom2` varchar(50) DEFAULT NULL,
-  `fom3` varchar(50) DEFAULT NULL,
-  `fom4` varchar(50) DEFAULT NULL,
+  `fom1_label` varchar(50) DEFAULT NULL,
+  `fom2_label` varchar(50) DEFAULT NULL,
+  `fom3_label` varchar(50) DEFAULT NULL,
+  `fom4_label` varchar(50) DEFAULT NULL,
   `text_description` text,
   `date` date DEFAULT NULL,
-  PRIMARY KEY (`suite_id`)
+  PRIMARY KEY (`suite_id`),
+  UNIQUE KEY `uk_benchmarksuite_name_variation` (`name`,`variation`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -75,8 +77,8 @@ CREATE TABLE `benchmarksuitepublication` (
   `text_description` text,
   `date` date DEFAULT NULL,
   PRIMARY KEY (`suite_pub_id`),
-  KEY `suite_id` (`suite_id`),
-  CONSTRAINT `benchmarksuitepublication_ibfk_1` FOREIGN KEY (`suite_id`) REFERENCES `benchmarksuite` (`suite_id`)
+  KEY `idx_suitepub_suite` (`suite_id`),
+  CONSTRAINT `fk_suitepub_suite` FOREIGN KEY (`suite_id`) REFERENCES `benchmarksuite` (`suite_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -107,10 +109,10 @@ CREATE TABLE `result` (
   `tool_release_id` int DEFAULT NULL,
   `suite_id` int DEFAULT NULL,
   `benchmark_id` int DEFAULT NULL,
-  `fom1` float DEFAULT NULL,
-  `fom2` float DEFAULT NULL,
-  `fom3` float DEFAULT NULL,
-  `fom4` float DEFAULT NULL,
+  `fom1` bigint unsigned DEFAULT NULL,
+  `fom2` bigint unsigned DEFAULT NULL,
+  `fom3` bigint unsigned DEFAULT NULL,
+  `fom4` bigint unsigned DEFAULT NULL,
   `URL` varchar(255) DEFAULT NULL,
   `file_hash` varchar(128) DEFAULT NULL,
   `evaluator_output` text,
@@ -119,17 +121,22 @@ CREATE TABLE `result` (
   `date` date DEFAULT NULL,
   `secret_key` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`result_id`),
-  KEY `tool_id` (`tool_id`),
-  KEY `tool_release_id` (`tool_release_id`),
-  KEY `suite_id` (`suite_id`),
-  KEY `benchmark_id` (`benchmark_id`),
-  KEY `image_id` (`image_id`),
-  CONSTRAINT `result_ibfk_1` FOREIGN KEY (`tool_id`) REFERENCES `tool` (`tool_id`),
-  CONSTRAINT `result_ibfk_2` FOREIGN KEY (`tool_release_id`) REFERENCES `toolrelease` (`tool_release_id`),
-  CONSTRAINT `result_ibfk_3` FOREIGN KEY (`suite_id`) REFERENCES `benchmarksuite` (`suite_id`),
-  CONSTRAINT `result_ibfk_4` FOREIGN KEY (`benchmark_id`) REFERENCES `benchmark` (`benchmark_id`),
-  CONSTRAINT `result_ibfk_5` FOREIGN KEY (`image_id`) REFERENCES `images` (`image_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=334 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  UNIQUE KEY `uk_result_identity` (`tool_id`,`tool_release_id`,`suite_id`,`benchmark_id`,`date`,`file_hash`),
+  KEY `idx_result_fom1` (`fom1`),
+  KEY `idx_result_fom2` (`fom2`),
+  KEY `idx_result_fom3` (`fom3`),
+  KEY `idx_result_fom4` (`fom4`),
+  KEY `idx_result_tool` (`tool_id`),
+  KEY `idx_result_release` (`tool_release_id`),
+  KEY `idx_result_suite` (`suite_id`),
+  KEY `idx_result_bench` (`benchmark_id`),
+  KEY `idx_result_image` (`image_id`),
+  CONSTRAINT `fk_result_benchmark` FOREIGN KEY (`benchmark_id`) REFERENCES `benchmark` (`benchmark_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_result_image` FOREIGN KEY (`image_id`) REFERENCES `images` (`image_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_result_suite` FOREIGN KEY (`suite_id`) REFERENCES `benchmarksuite` (`suite_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_result_tool` FOREIGN KEY (`tool_id`) REFERENCES `tool` (`tool_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_result_toolrelease` FOREIGN KEY (`tool_release_id`) REFERENCES `toolrelease` (`tool_release_id`) ON DELETE SET NULL ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=128 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -146,8 +153,9 @@ CREATE TABLE `tool` (
   `text_description` text,
   `image_id` int DEFAULT NULL,
   PRIMARY KEY (`tool_id`),
-  KEY `image_id` (`image_id`),
-  CONSTRAINT `tool_ibfk_1` FOREIGN KEY (`image_id`) REFERENCES `images` (`image_id`)
+  UNIQUE KEY `uk_tool_name` (`name`),
+  KEY `idx_tool_image` (`image_id`),
+  CONSTRAINT `fk_tool_image` FOREIGN KEY (`image_id`) REFERENCES `images` (`image_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -167,10 +175,10 @@ CREATE TABLE `toolpublication` (
   `text_description` text,
   `date` date DEFAULT NULL,
   PRIMARY KEY (`tool_pub_id`),
-  KEY `tool_id` (`tool_id`),
-  KEY `tool_release_id` (`tool_release_id`),
-  CONSTRAINT `toolpublication_ibfk_1` FOREIGN KEY (`tool_id`) REFERENCES `tool` (`tool_id`),
-  CONSTRAINT `toolpublication_ibfk_2` FOREIGN KEY (`tool_release_id`) REFERENCES `toolrelease` (`tool_release_id`)
+  KEY `idx_toolpub_tool` (`tool_id`),
+  KEY `idx_toolpub_release` (`tool_release_id`),
+  CONSTRAINT `fk_toolpub_release` FOREIGN KEY (`tool_release_id`) REFERENCES `toolrelease` (`tool_release_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_toolpub_tool` FOREIGN KEY (`tool_id`) REFERENCES `tool` (`tool_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -189,8 +197,9 @@ CREATE TABLE `toolrelease` (
   `date` date DEFAULT NULL,
   `text_description` text,
   PRIMARY KEY (`tool_release_id`),
-  KEY `tool_id` (`tool_id`),
-  CONSTRAINT `toolrelease_ibfk_1` FOREIGN KEY (`tool_id`) REFERENCES `tool` (`tool_id`)
+  UNIQUE KEY `uk_toolrelease_tool_name` (`tool_id`,`name`),
+  KEY `idx_toolrelease_tool` (`tool_id`),
+  CONSTRAINT `fk_toolrelease_tool` FOREIGN KEY (`tool_id`) REFERENCES `tool` (`tool_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -203,4 +212,4 @@ CREATE TABLE `toolrelease` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-08-16 17:20:50
+-- Dump completed on 2025-08-16 20:05:07
