@@ -1,88 +1,82 @@
 <?php
-require_once 'config.php';
+session_start();
+require_once __DIR__.'/config.php';
+require_once __DIR__.'/lib/helpers.php';
 
-// Query latest 200 results
-$stmt = $pdo->query("
-  SELECT r.result_id, r.date,
-         r.fom1, r.fom2, r.fom3, r.fom4, r.URL,
-         t.name  AS tool_name,
-         tr.name AS release_name,
-         s.name  AS suite_name,
-         b.name  AS benchmark_name
-  FROM result r
-  LEFT JOIN tool          t  ON r.tool_id = t.tool_id
-  LEFT JOIN toolrelease   tr ON r.tool_release_id = tr.tool_release_id
-  LEFT JOIN benchmarksuite s ON r.suite_id = s.suite_id
-  LEFT JOIN benchmark     b  ON r.benchmark_id = b.benchmark_id
-  ORDER BY r.date DESC
-  LIMIT 200
-");
+// Init CSRF
+if (empty($_SESSION['csrf'])) { $_SESSION['csrf'] = bin2hex(random_bytes(32)); }
+$CSRF = $_SESSION['csrf'];
 
-$rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
-<!doctype html>
+// Handle POST centrally
+$flash = null; $flash_err = null;
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  require __DIR__.'/lib/actions.php';
+}
+
+// Router
+$page = $_GET['page'] ?? 'results';
+$valid = ['results','suites','benchmarks','tools','manage'];
+if (!in_array($page, $valid, true)) { $page = 'results'; }
+
+// Shared lookups
+$all_suites = suites($pdo);
+?><!doctype html>
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Placement Results</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Suites DB</title>
   <style>
     body { font-family: system-ui, -apple-system, Arial, sans-serif; margin: 24px; }
-    h1 { margin-bottom: 16px; }
+    h1 { margin: 0 0 12px; }
+    .nav { display:flex; gap:10px; margin: 12px 0 24px; flex-wrap: wrap; }
+    .nav a { padding:8px 12px; border:1px solid #ddd; border-radius:8px; text-decoration:none; color:#222; }
+    .nav a.active { background:#0d6efd; color:#fff; border-color:#0d6efd; }
     table { border-collapse: collapse; width: 100%; font-size: 14px; }
-    th, td { border: 1px solid #ddd; padding: 6px 10px; }
+    th, td { border: 1px solid #ddd; padding: 6px 10px; vertical-align: top; }
     th { background: #f4f4f4; text-align: left; }
     tr:hover { background: #fafafa; }
     .mono { font-family: ui-monospace, Menlo, Consolas, monospace; }
     a { color: #0645AD; text-decoration: none; }
     a:hover { text-decoration: underline; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px; }
+    .card { border:1px solid #ddd; border-radius:12px; padding:12px; }
+    .muted { color:#666; font-size:12px; }
+    form.inline { display:inline; }
+    input[type=text], input[type=date], input[type=number], textarea, select { width:100%; box-sizing:border-box; padding:8px; border:1px solid #ccc; border-radius:8px; }
+    textarea { min-height: 80px; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .row3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+    .btn { padding:8px 12px; border:1px solid #0d6efd; background:#0d6efd; color:#fff; border-radius:8px; cursor:pointer; }
+    .btn.alt { background:#eee; color:#222; border-color:#ccc; }
+    .flash { padding:10px 12px; border-radius:8px; margin-bottom:12px; }
+    .flash.ok { background:#e7f5ff; border:1px solid #91d5ff; }
+    .flash.err { background:#fff1f0; border:1px solid #ffa39e; }
+    details>summary { cursor:pointer; font-weight:600; margin-bottom:8px; }
   </style>
 </head>
 <body>
 
-<h1>Latest Results</h1>
+<h1>Suites & Benchmarks</h1>
+<div class="nav">
+  <?php
+    foreach ([
+      'results'    => 'Results',
+      'suites'     => 'Suites',
+      'benchmarks' => 'Benchmarks',
+      'tools'      => 'Tools',
+      'manage'     => 'Add / Edit',
+    ] as $k=>$label):
+      $cls = $page===$k ? 'active' : '';
+      echo '<a class="'.$cls.'" href="index.php?page='.$k.'">'.h($label).'</a>';
+    endforeach;
+  ?>
+</div>
 
-<table>
-  <thead>
-    <tr>
-      <th>#</th>
-      <th>Date</th>
-      <th>Tool</th>
-      <th>Release</th>
-      <th>Suite</th>
-      <th>Benchmark</th>
-      <th>FOM1</th>
-      <th>FOM2</th>
-      <th>FOM3</th>
-      <th>FOM4</th>
-      <th>URL</th>
-    </tr>
-  </thead>
-  <tbody>
-    <?php if (count($rows) === 0): ?>
-      <tr><td colspan="11">No results found</td></tr>
-    <?php else: ?>
-      <?php foreach ($rows as $r): ?>
-        <tr>
-          <td class="mono"><?=htmlspecialchars($r['result_id'])?></td>
-          <td><?=htmlspecialchars($r['date'])?></td>
-          <td><?=htmlspecialchars($r['tool_name'] ?? '')?></td>
-          <td><?=htmlspecialchars($r['release_name'] ?? '')?></td>
-          <td><?=htmlspecialchars($r['suite_name'] ?? '')?></td>
-          <td><?=htmlspecialchars($r['benchmark_name'] ?? '')?></td>
-          <td class="mono"><?=htmlspecialchars($r['fom1'])?></td>
-          <td class="mono"><?=htmlspecialchars($r['fom2'])?></td>
-          <td class="mono"><?=htmlspecialchars($r['fom3'])?></td>
-          <td class="mono"><?=htmlspecialchars($r['fom4'])?></td>
-          <td>
-            <?php if (!empty($r['URL'])): ?>
-              <a href="<?=htmlspecialchars($r['URL'])?>" target="_blank">link</a>
-            <?php endif; ?>
-          </td>
-        </tr>
-      <?php endforeach; ?>
-    <?php endif; ?>
-  </tbody>
-</table>
+<?php if($flash): ?><div class="flash ok"><?=h($flash)?></div><?php endif; ?>
+<?php if($flash_err): ?><div class="flash err"><?=h($flash_err)?></div><?php endif; ?>
+
+<?php require __DIR__.'/pages/'.$page.'.php'; ?>
 
 </body>
 </html>
