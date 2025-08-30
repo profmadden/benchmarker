@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 // Router
 $page = $_GET['page'] ?? 'results';
-$valid = ['results','suites','benchmarks','tools','manage'];
+$valid = ['results','suites','manage'];
 if (!in_array($page, $valid, true)) { $page = 'results'; }
 
 // Shared lookups
@@ -63,8 +63,6 @@ $all_suites = suites($pdo);
     foreach ([
       'results'    => 'Results',
       'suites'     => 'Suites',
-      'benchmarks' => 'Benchmarks',
-      'tools'      => 'Tools',
       'manage'     => 'Add / Edit',
     ] as $k=>$label):
       $cls = $page===$k ? 'active' : '';
