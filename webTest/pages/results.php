@@ -10,21 +10,12 @@ $h = static fn($s)=>htmlspecialchars((string)$s, ENT_QUOTES, 'UTF-8');
 $selected = static fn($cond)=>$cond ? ' selected' : '';
 $checked  = static fn($cond)=>$cond ? ' checked'  : '';
 
-// ---- table autodetect (handles schemas that don't use "suite"/"benchmark" names) ----
-$detect_table = function(PDO $pdo, array $candidates) {
-  $sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ? LIMIT 1";
-  $st  = $pdo->prepare($sql);
-  foreach ($candidates as $name) {
-    $st->execute([$name]);
-    if ($st->fetchColumn()) return $name;
-  }
-  return $candidates[0];
-};
+// ---- canonical tables (no autodetect) ----
 $T = [
-  'result'    => $detect_table($pdo, ['result','results']),
-  'tool'      => $detect_table($pdo, ['tool','tools']),
-  'suite'     => $detect_table($pdo, ['suite','benchmark_suite','BenchmarkSuite','suites']),
-  'benchmark' => $detect_table($pdo, ['benchmark','benchmarks']),
+  'result'    => 'result',
+  'tool'      => 'tool',
+  'suite'     => 'benchmarksuite',
+  'benchmark' => 'benchmark',
 ];
 
 // ----- read filters (GET) -----

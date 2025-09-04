@@ -7,22 +7,13 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['export_csv','export_
     exit;
   }
 
-  // ---- table autodetect (same as results.php) ----
-  $detect_table = function(PDO $pdo, array $candidates) {
-    $sql = "SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ? LIMIT 1";
-    $st  = $pdo->prepare($sql);
-    foreach ($candidates as $name) {
-      $st->execute([$name]);
-      if ($st->fetchColumn()) return $name;
-    }
-    return $candidates[0];
-  };
-  $T = [
-    'result'    => $detect_table($pdo, ['result','results']),
-    'tool'      => $detect_table($pdo, ['tool','tools']),
-    'suite'     => $detect_table($pdo, ['suite','benchmark_suite','BenchmarkSuite','suites']),
-    'benchmark' => $detect_table($pdo, ['benchmark','benchmarks']),
-  ];
+// ---- canonical tables (no autodetect) ----
+$T = [
+  'result'    => 'result',
+  'tool'      => 'tool',
+  'suite'     => 'benchmarksuite',
+  'benchmark' => 'benchmark',
+];
 
   // inputs
   $FOM_KEYS = ['fom1','fom2','fom3','fom4'];
