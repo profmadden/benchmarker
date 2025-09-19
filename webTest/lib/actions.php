@@ -7,18 +7,18 @@ if (isset($_POST['action']) && in_array($_POST['action'], ['export_csv','export_
     exit;
   }
 
-// ---- canonical tables (no autodetect) ----
-$T = [
-  'result'    => 'result',
-  'tool'      => 'tool',
-  'suite'     => 'benchmarksuite',
-  'benchmark' => 'benchmark',
-];
+  // ---- canonical tables ----
+  $T = [
+    'result'    => 'result',
+    'tool'      => 'tool',
+    'suite'     => 'benchmarksuite',
+    'benchmark' => 'benchmark',
+  ];
 
   // inputs
   $FOM_KEYS = ['fom1','fom2','fom3','fom4'];
   $suite_ids     = array_map('intval', $_POST['suites'] ?? []);
-  $benchmark_ids = array_map('intval', $_POST['benchmark_ids'] ?? []); // <-- MULTI
+  $benchmark_ids = array_map('intval', $_POST['benchmark_ids'] ?? []);
   $tools         = array_values(array_filter((array)($_POST['tools'] ?? [])));
   $foms          = array_values(array_intersect($FOM_KEYS, (array)($_POST['foms'] ?? $FOM_KEYS)));
   if (!$foms) $foms = $FOM_KEYS;
@@ -59,18 +59,22 @@ $T = [
     SELECT *
     FROM (
       SELECT
-        s.name AS suite_name,
+        CONCAT(s.name, COALESCE(CONCAT(' — ', s.variation), '')) AS suite_name,
         b.name AS bench_name,
         t.name AS tool_name,
         r.fom1, r.fom2, r.fom3, r.fom4,
         ROW_NUMBER() OVER (
-          PARTITION BY r.suite_id, r.benchmark_id, r.tool_id
-          ORDER BY r.date DESC, r.result_id DESC
-        ) AS rn
-      FROM `{$T['result']}` r
-      JOIN `{$T['tool']}`      t ON t.tool_id = r.tool_id
-      JOIN `{$T['suite']}`     s ON s.suite_id = r.suite_id
-      JOIN `{$T['benchmark']}` b ON b.benchmark_id = r.benchmark_id
+        PARTITION BY r.suite_id, r.benchmark_id, r.tool_id
+        ORDER BY
+          CASE WHEN r.run_version REGEXP '^[0-9]{8}$' THEN 0 ELSE 1 END,
+          CASE WHEN r.run_version REGEXP '^[0-9]{8}$' THEN r.run_version ELSE '' END DESC,
+          r.date DESC,
+          r.result_id DESC
+      ) AS rn
+      FROM `result` r
+      JOIN `tool`      t ON t.tool_id = r.tool_id
+      JOIN `benchmarksuite`     s ON s.suite_id = r.suite_id
+      JOIN `benchmark` b ON b.benchmark_id = r.benchmark_id
       $wsql
     ) x
     WHERE rn = 1
@@ -93,9 +97,9 @@ $T = [
 
   if ($_POST['action'] === 'export_csv') {
     header('Content-Type: text/csv; charset=utf-8');
-    header('Content-Disposition: attachment; filename="suites_results.csv"');
-    $out = fopen('php://output', 'w');
+    header('Content-Disposition: attachment; filename="suites_results.csv"'); // FIXED
 
+    $out = fopen('php://output', 'w');
     $header = ['Suite','Benchmark'];
     foreach ($tools_order as $t) foreach ($foms as $f) $header[] = "$t ".strtoupper($f);
     fputcsv($out, $header);
@@ -114,7 +118,7 @@ $T = [
 
   if ($_POST['action'] === 'export_latex') {
     header('Content-Type: text/plain; charset=utf-8');
-    header('Content-Disposition: attachment; filename="suites_results.tex"');
+    header('Content-Disposition: attachment; filename="suites_results.tex"'); // FIXED
 
     $cols = 2 + count($tools_order) * count($foms);
     $colspec = str_repeat('c', $cols);
@@ -144,4 +148,95 @@ $T = [
     echo $latex;
     exit;
   }
+}
+
+// -------- Save flags (supports multi-tool per row with one shared description) --------
+if (isset($_POST['action']) && $_POST['action'] === 'save_flags') {
+  // CSRF
+  if (!hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'] ?? '')) {
+    http_response_code(400);
+    echo "Invalid CSRF token";
+    exit;
+  }
+
+  // Inputs
+  $flags       = $_POST['flags']       ?? []; // flags[result_id] = "1"
+  $ridRowKey   = $_POST['rid_rowkey']  ?? []; // rid_rowkey[result_id] = rowKey
+  $rowDescs    = $_POST['row_desc']    ?? []; // row_desc[rowKey] = "desc"
+  $legacyDescs = $_POST['desc']        ?? []; // (back-compat)
+  $onlyRowKey  = isset($_POST['only_rowkey']) ? (string)$_POST['only_rowkey'] : '';
+  $tabAfter    = $_POST['tab_after'] ?? '';
+
+  // If 'Done' was pressed on one row, keep only those flags for that row
+  if ($onlyRowKey !== '') {
+    $flags = array_filter(
+      $flags,
+      function($on, $rid) use ($ridRowKey, $onlyRowKey) {
+        return isset($ridRowKey[$rid]) && $ridRowKey[$rid] === $onlyRowKey;
+      },
+      ARRAY_FILTER_USE_BOTH
+    );
+  }
+
+  if (!$flags) {
+    $_SESSION['flash'] = 'No flags to save.';
+    $redir = 'index.php?page=results'.($tabAfter==='flags' ? '&tab=flags' : '');
+    header('Location: '.$redir);
+    exit;
+  }
+
+  $verifyStmt = $pdo->prepare("SELECT 1 FROM result WHERE result_id = ?");
+  $insStmt    = $pdo->prepare("INSERT INTO flag_records (result_id, description) VALUES (?, ?)");
+
+  $saved = 0;
+  foreach ($flags as $rid => $on) {
+    $rid = (int)$rid;
+    if ($rid <= 0) continue;
+
+    $verifyStmt->execute([$rid]);
+    if (!$verifyStmt->fetchColumn()) continue;
+
+    // prefer row-level shared description; fall back to per-rid (legacy)
+    $rowKey = $ridRowKey[$rid] ?? '';
+    $desc   = '';
+    if ($rowKey !== '' && isset($rowDescs[$rowKey])) {
+      $desc = trim((string)$rowDescs[$rowKey]);
+    } else {
+      $desc = trim((string)($legacyDescs[$rid] ?? ''));
+    }
+    if (function_exists('mb_substr')) {
+      $desc = mb_substr($desc, 0, 1000, 'UTF-8');
+    } else {
+      $desc = substr($desc, 0, 1000);
+    }
+
+    $insStmt->execute([$rid, $desc]);
+    $saved++;
+  }
+
+  $_SESSION['flash'] = $saved ? "Saved $saved flag(s)." : "No valid flags saved.";
+  $redir = 'index.php?page=results'.($tabAfter==='flags' ? '&tab=flags' : '');
+  header('Location: '.$redir);
+  exit;
+}
+
+
+// -------- Resolve (delete) a single flag from flag_records --------
+if (isset($_POST['action']) && $_POST['action'] === 'resolve_flag') {
+  if (!hash_equals($_SESSION['csrf'] ?? '', $_POST['csrf'] ?? '')) {
+    http_response_code(400);
+    echo "Invalid CSRF token";
+    exit;
+  }
+
+  $flag_id = isset($_POST['flag_id']) ? (int)$_POST['flag_id'] : 0;
+  if ($flag_id > 0) {
+    $stmt = $pdo->prepare("DELETE FROM flag_records WHERE flag_id = ?");
+    $stmt->execute([$flag_id]);
+    $_SESSION['flash'] = "Flag #$flag_id cleared.";
+  } else {
+    $_SESSION['flash_err'] = "Invalid flag id.";
+  }
+  header('Location: index.php?page=flags');
+  exit;
 }
