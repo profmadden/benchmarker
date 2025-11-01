@@ -1,0 +1,8 @@
+addsuite,ispd98,mincut,http://dx.doi.org/10.1145/274535.274546,url,mincut,avgcut,sod,time,ISPD 98 Partitioning Benchmarks
+addbench,ibm01,url,"12506 cells, 14111 nets"
+addbench,ibm02,url,"19342 cells, 19584 nets"
+addbench,ibm03,url,"22853 cells, 27401 nets"
+addbench,ibm04,url,"27220 cells, 31970 nets"
+
+importdir,ispd98/mincut
+

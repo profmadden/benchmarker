@@ -1,0 +1,7 @@
+suite,ispd98,mincut
+addtool,hmetis,"http://ieeexplore.ieee.org/document/597203/","hMetis graph partitioner"
+addrelease,hmetis,"1.0"
+result,ibm01,181,236,2.4,0.0,"Taken from Alpert ISPD98"
+result,ibm02,262,312,5.8,0.0,"Taken from Alpert ISPD98"
+result,ibm03,9591,1068,6.8,0.0,"Taken from Alpert ISPD98"
+result,ibm04,542,588,7.3,0.0,"Taken from Alpert ISPD98"
