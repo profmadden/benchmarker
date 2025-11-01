@@ -1,0 +1,9 @@
+suite,ispd2020,contest
+addtool,cupoker,"https://dl.acm.org/doi/10.1145/3400302.3415688","CU.POKer wafer scale kernel sizing"
+addrelease,cupoker,"1.0"
+result,a,34496,1314,35810,0.0,""
+result,b,63504,2639.5,66143.5,0.0,""
+result,c,64512,2408,66920,0.0,""
+result,d,33713,2722,36435,0.0,""
+
+

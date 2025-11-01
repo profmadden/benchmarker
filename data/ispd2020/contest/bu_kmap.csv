@@ -1,0 +1,7 @@
+suite,ispd2020,contest
+addtool,bu_kmap,"https://dl.acm.org/doi/10.1145/3505170.3506730","Binghamton University kernel mapping"
+addrelease,bu_kmap,"1.0"
+result,a,34496,1314,35810,0.0,""
+result,b,64512,1913,66425,0.0,""
+result,c,64512,4108,68620,0.0,""
+result,d,33713,3588,37300,0.0,""
