@@ -1,8 +1,0 @@
-suite,ispd98,mincut
-addtool,fm,"http://ieeexplore.ieee.org/document/597203/","Fiduccia-Mattheyese graph partitioner, implemented by Alpert"
-addrelease,fm,"1.0"
-result,ibm01,191,466,4.1,0.0,"Taken from Alpert ISPD98"
-result,ibm02,266,506,6.9,0.0,"Taken from Alpert ISPD98"
-result,ibm03,1150,2131,16.3,0.0,"Taken from Alpert ISPD98"
-result,ibm04,603,1105,14.0,0.0,"Taken from Alpert ISPD98"
-

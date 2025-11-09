@@ -77,7 +77,7 @@ function parseCSV($pdo, $file, $suite_id, $tool_id, $tool_release_id)
                     print("PUB:\n  $data[1]\n  $data[2]\n");
                 }
 
-                if (($data[0] == "addsuite") && ($num == 10)) {
+                if (($data[0] == "addsuite") && ($num >= 10)) {
                     $suite_id = fetchSuiteId($pdo, $data[1], $data[2]);
                     if ($suite_id == -1) {
                         $query    = "INSERT INTO benchmarksuite (name, variation, url_benchmarks, url_evaluator, fom1_label, fom2_label, fom3_label, fom4_label, text_description) VALUES ('$data[1]','$data[2]','$data[3]','$data[4]','$data[5]','$data[6]','$data[7]','$data[8]',\"$data[9]\");";
@@ -90,11 +90,11 @@ function parseCSV($pdo, $file, $suite_id, $tool_id, $tool_release_id)
                         print("Suite $data[1] $data[2] already exists, and is suite ID $suite_id\n");
                     }
                 }
-                if (($data[0] == "addbench") && ($num == 4)) {
+                if (($data[0] == "addbench") && ($num >= 4)) {
                     $query = "INSERT INTO benchmark (suite_id, name, url, text_description) VALUES ($suite_id,'$data[1]','$data[2]','$data[3]');";
                     $r     = $pdo->query($query);
                 }
-                if (($data[0] == "addtool") && ($num == 4)) {
+                if (($data[0] == "addtool") && ($num >= 4)) {
                     $tool_id = fetchToolId($pdo, $data[1]);
                     if ($tool_id == -1) {
                        $query = "INSERT INTO tool (name, URL, text_description) VALUES ('$data[1]','$data[2]','$data[3]');";
@@ -102,7 +102,7 @@ function parseCSV($pdo, $file, $suite_id, $tool_id, $tool_release_id)
                     }
                     $tool_id = fetchToolId($pdo, $data[1]);
                 }
-                if (($data[0] == "addrelease") && ($num == 3)) {
+                if (($data[0] == "addrelease") && ($num >= 3)) {
                     $tool_release_id = fetchToolReleaseId($pdo,$data[1],$data[2]);
                     if ($tool_release_id == -1) {
                         $query = "INSERT INTO toolrelease (tool_id, name, tool_release_version) VALUES ($tool_id,'$data[1]','$data[2]');";

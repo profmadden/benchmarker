@@ -63,9 +63,9 @@ $all_suites = suites($pdo);
     foreach ([
       'results'    => 'Results',
       'suites'     => 'Suites',
-      'flags'      => 'Flag Reviews',
-      'manage'     => 'Add / Edit',
-      'upload' => 'Upload Run',
+      // 'flags'      => 'Flag Reviews',
+      // 'manage'     => 'Add / Edit',
+      // 'upload' => 'Upload Run',
     ] as $k=>$label):
       $cls = $page===$k ? 'active' : '';
       echo '<a class="'.$cls.'" href="index.php?page='.$k.'">'.h($label).'</a>';
