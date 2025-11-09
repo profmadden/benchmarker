@@ -15,6 +15,7 @@ $T = [
   'tool'      => 'tool',
   'suite'     => 'benchmarksuite',
   'benchmark' => 'benchmark',
+  'toolrelease' => 'toolrelease',
 ];
 
 // active tab
@@ -101,7 +102,23 @@ $wsql = $where ? ('WHERE '.implode(' AND ', $where)) : '';
 
 // include result_id so we can flag
 $sql = "
-  SELECT *
+  SELECT 
+      x.result_id,
+    x.suite_id,
+    x.benchmark_id,
+    x.tool_id,
+    x.suite_name,
+    x.bench_name,
+    x.tool_name,
+    x.tool_url,
+    x.tool_version,
+    x.release_url,
+    x.fom1,
+    x.fom2,
+    x.fom3,
+    x.fom4, 
+    x.result_url,
+    x.text_description
   FROM (
     SELECT
       r.result_id,
@@ -111,7 +128,12 @@ $sql = "
       CONCAT(s.name, COALESCE(CONCAT(' — ', s.variation), '')) AS suite_name,
       b.name AS bench_name,
       t.name AS tool_name,
+      COALESCE(t.URL, '#') AS tool_url,
+      COALESCE(tr.tool_release_version, 'v1.0 (default)') AS tool_version,
+      COALESCE(tr.URL, '#') AS release_url,
       r.fom1, r.fom2, r.fom3, r.fom4,
+      COALESCE(r.URL, '#') AS result_url,
+      COALESCE(NULLIF(r.text_description, ''), 'Example: command to reproduce this result.') AS text_description,
       ROW_NUMBER() OVER (
         PARTITION BY r.suite_id, r.benchmark_id, r.tool_id
         ORDER BY r.date DESC, r.result_id DESC
@@ -120,6 +142,7 @@ $sql = "
     JOIN `{$T['tool']}`      t ON t.tool_id = r.tool_id
     JOIN `{$T['suite']}`     s ON s.suite_id = r.suite_id
     JOIN `{$T['benchmark']}` b ON b.benchmark_id = r.benchmark_id
+    LEFT JOIN `{$T['toolrelease']}` tr ON tr.tool_release_id = r.tool_release_id
     $wsql
   ) x
   WHERE rn = 1
@@ -138,7 +161,9 @@ foreach ($rows as $r) {
   if (!isset($pivot[$s][$b])) { $pivot[$s][$b] = []; $combo_keys[] = [$s,$b]; }
   $pivot[$s][$b][$t] = [
     'fom1'=>$r['fom1'],'fom2'=>$r['fom2'],'fom3'=>$r['fom3'],'fom4'=>$r['fom4'],
-    'result_id'=>$r['result_id']
+    'result_id'=>$r['result_id'],
+      'text_description' => $r['text_description'],
+    'result_url'=>$r['result_url'], 
   ];
 }
 
@@ -212,7 +237,94 @@ $last_flag_id = isset($_GET['last_flag_id']) ? (int)$_GET['last_flag_id'] : 0;
   table.flag-matrix tr.flag-yellow { background: #fff8e1; }
   table.flag-matrix tr.flag-orange { background: #ffeeda; }
   table.flag-matrix tr.flag-red    { background: #ffe5e5; }
+
+    /* --- Added: Benchmarker Enhanced Result UI (Rahul & Tejas) --- */
+
+  .tool-link {
+    font-weight: 600;
+    color: #0d6efd;
+    text-decoration: none;
+  }
+  .tool-link:hover {
+    text-decoration: underline;
+  }
+
+  .version-text a {
+    color: #6c757d;
+    text-decoration: none;
+    font-style: italic;
+    font-size: 13px;
+  }
+  .version-text.placeholder a {
+    color: #9a9a9a;
+  }
+
+  .fom-cell .fom-link {
+    color: #007bff;
+    font-weight: 500;
+    text-decoration: none;
+  }
+  .fom-cell .fom-link:hover {
+    text-decoration: underline;
+  }
+
+  .info-icon {
+    font-size: 12px;
+    margin-left: 4px;
+    cursor: help;
+    color: #007bff;
+  }
+
+  .placeholder {
+    color: #999;
+    font-style: italic;
+  }
+
+    .info-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .info-modal-content {
+    background: #fff;
+    border-radius: 8px;
+    padding: 16px 20px;
+    max-width: 480px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+  }
+  .info-modal-content h3 {
+    margin-top: 0;
+    color: #333;
+  }
+  .info-modal-content pre {
+    background: #f6f8fa;
+    padding: 8px;
+    border-radius: 6px;
+    white-space: pre-wrap;
+    font-size: 14px;
+  }
+  .info-close {
+    margin-top: 10px;
+    padding: 6px 12px;
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 </style>
+<div id="infoModal" class="info-modal">
+  <div class="info-modal-content">
+    <h3>Result Description</h3>
+    <pre id="infoText">...</pre>
+    <button class="info-close">Close</button>
+  </div>
+</div>
+
 
 <div class="card" style="margin-bottom:16px;">
   <form id="filters" method="get" action="index.php">
@@ -358,6 +470,35 @@ $last_flag_id = isset($_GET['last_flag_id']) ? (int)$_GET['last_flag_id'] : 0;
     suiteSelect.value = phpSuiteName;
   }
   if (suiteSelect.value) populateVariations(suiteSelect.value);
+
+  //Added <icon> button info JS
+  document.addEventListener('DOMContentLoaded', () => {
+  const modal = document.getElementById('infoModal');
+  const infoText = document.getElementById('infoText');
+  const closeBtn = modal.querySelector('.info-close');
+
+  // Hover: small tooltip (uses title)
+  document.querySelectorAll('.info-icon').forEach(icon => {
+    icon.addEventListener('mouseenter', e => {
+      const desc = e.target.getAttribute('data-desc');
+      e.target.setAttribute('title', desc);
+    });
+
+    // Click: open modal for long description
+    icon.addEventListener('click', e => {
+      const desc = e.target.getAttribute('data-desc');
+      infoText.textContent = desc || 'No description available.';
+      modal.style.display = 'flex';
+    });
+  });
+
+  // Close modal
+  closeBtn.addEventListener('click', () => modal.style.display = 'none');
+  modal.addEventListener('click', e => {
+    if (e.target === modal) modal.style.display = 'none';
+  });
+});
+
 </script>
 
 <!-- Sub-tabs -->
@@ -460,17 +601,37 @@ $last_flag_id = isset($_GET['last_flag_id']) ? (int)$_GET['last_flag_id'] : 0;
         <th rowspan="2">Suite</th>
         <th rowspan="2">Benchmark</th>
         <?php foreach ($display_tools as $t): ?>
-          <th colspan="<?=count($sel_foms)+2?>"><?=$h($t)?></th>
+          <?php
+              $sample = null;
+              foreach ($rows as $r) {
+                if ($r['tool_name'] === $t) { $sample = $r; break; }
+              }
+              $tool_url = $sample['tool_url'] ?? '#';
+              $rel_url  = $sample['release_url'] ?? '#';
+              $tool_ver = $sample['tool_version'] ?? 'v1.0 (default)';
+              $is_default = str_contains($tool_ver, 'default');
+            ?>
+            <!-- Hyperlink to Tool Header -->
+          <th colspan="<?=count($sel_foms)?>">
+                <a href="<?=$h($tool_url)?>" target="_blank" class="tool-link"><?=$h($t)?></a><br>
+                <small class="version-text <?=$is_default ? 'placeholder' : ''?>">
+                  <a href="<?=$h($rel_url)?>" target="_blank"><?=$h($tool_ver)?></a>
+                </small>
+          </th>
         <?php endforeach; ?>
-        <th rowspan="2">Description (applies to all toggled tools)</th>
+        <!-- <th rowspan="2">Description (applies to all toggled tools)</th> -->
       </tr>
       <tr>
         <?php foreach ($display_tools as $t): ?>
           <?php foreach ($sel_foms as $f): ?>
             <th><?=strtoupper($h($f))?></th>
           <?php endforeach; ?>
-          <th>Flagged</th>
-          <th>Flag</th>
+          <!-- Added to remove flag -->
+          <?php if(false): ?>
+            <th>Flagged</th>
+            <th>Flag</th>
+          <?php endif; ?>
+          <!-- Ended added flag here -->
         <?php endforeach; ?>
       </tr>
     </thead>
@@ -507,24 +668,42 @@ $last_flag_id = isset($_GET['last_flag_id']) ? (int)$_GET['last_flag_id'] : 0;
           <?php foreach ($display_tools as $t): ?>
             <?php $vals = $pivot[$s][$b][$t] ?? null; $rid = (int)($vals['result_id'] ?? 0); ?>
             <?php foreach ($sel_foms as $f): ?>
-              <td class="mono"><?=$h($vals[$f] ?? '')?></td>
+              <?php
+                $val  = $vals[$f] ?? '';
+                $rurl = $vals['result_url'] ?? '#';
+                $desc = trim($vals['text_description'] ?? '');
+              ?>
+              <td class="mono fom-cell">
+                <?php if ($val !== ''): ?>
+                  <a href="<?=$h($rurl)?>" target="_blank" class="fom-link"><?=$h($val)?></a>
+                  <span class="info-icon" data-desc="<?=$h($desc)?>" title="<?=$h($desc)?>">&#9432;</span>
+                <?php else: ?>
+                  <span class="placeholder">—</span>
+                <?php endif; ?>
+              </td>
             <?php endforeach; ?>
-            <td class="mono"><?= (int)($flag_counts[$rid] ?? 0) ?></td>
-            <td>
-              <?php if ($rid): ?>
-                <input type="hidden" name="rid_rowkey[<?=$rid?>]" value="<?=$rowKey?>">
-                <label class="switch" title="Flag latest <?=$h($t)?> result">
-                  <input type="checkbox"
-                    class="tool-flag-toggle"
-                    data-rowkey="<?=$rowKey?>"
-                    name="flags[<?=$rid?>]"
-                    value="1">
-                  <span class="slider"></span>
-                </label>
-              <?php endif; ?>
-            </td>
-          <?php endforeach; ?>
+            <!-- Added flag td data removed -->
+            <?php if(false): ?>
+              <td class="mono"><?= (int)($flag_counts[$rid] ?? 0) ?></td>
+              <td>
+                <?php if ($rid): ?>
+                  <input type="hidden" name="rid_rowkey[<?=$rid?>]" value="<?=$rowKey?>">
+                  <label class="switch" title="Flag latest <?=$h($t)?> result">
+                    <input type="checkbox"
+                      class="tool-flag-toggle"
+                      data-rowkey="<?=$rowKey?>"
+                      name="flags[<?=$rid?>]"
+                      value="1">
+                    <span class="slider"></span>
+                  </label>
+                <?php endif; ?>
+              </td>
+            <?php endif; ?>
+            <!-- Flag removed td data -->
 
+          <?php endforeach; ?>
+          <!-- Description column earlier present now making it false -->
+          <?php if(false): ?>
           <td class="desc-cell">
             <div class="desc-wrap" style="display:none;">
               <input type="text"
@@ -538,6 +717,8 @@ $last_flag_id = isset($_GET['last_flag_id']) ? (int)$_GET['last_flag_id'] : 0;
               </div>
             </div>
           </td>
+          <?php endif; ?>
+
         </tr>
       <?php endforeach; ?>
     </tbody>
