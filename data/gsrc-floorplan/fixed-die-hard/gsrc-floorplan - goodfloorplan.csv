@@ -1,0 +1,9 @@
+suite,gsrc-floorplan,fixed-die-hard,,,,
+addtool,goodfloorplan,https://doi.org/10.1109/tcad.2006.870076,GoodFloorplan RL floorplanner,,,
+addrelease,goodfloorplan,gsrc,,,,
+xresult,n10, ,0,0,0,x
+xresult,n30,,0,0,0,x
+xresult,n50,,0,0,0,x
+result,n100,309320,0,0,0,x
+result,n200,558330,0,0,0,x
+result,n300,690760,0,0,0,x

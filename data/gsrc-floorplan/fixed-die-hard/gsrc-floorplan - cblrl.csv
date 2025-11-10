@@ -1,0 +1,9 @@
+suite,gsrc-floorplan,fixed-die-hard,,,,
+addtool,cblrl,https://doi.org/10.1145/3534678.3539220,Corner Block List RL floorplanner,,,
+addrelease,cblrl,gsrc,,,,
+xresult,n10, ,0,0,0,Reported experimental results have not been validated.
+xresult,n30,,0,0,0,Reported experimental results have not been validated.
+xresult,n50,,0,0,0,Reported experimental results have not been validated.
+result,n100,337284,0,0,0,Reported experimental results have not been validated.
+result,n200,351735,0,0,0,Reported experimental results have not been validated.
+result,n300,476765,0,0,0,Reported experimental results have not been validated.

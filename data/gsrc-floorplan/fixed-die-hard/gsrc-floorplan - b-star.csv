@@ -1,0 +1,9 @@
+suite,gsrc-floorplan,fixed-die-hard,,,,
+addtool,b-star,https://doi.org/10.1109/tcad.2006.870076,B-* fixed outline floorplanner,,,
+addrelease,b-star,gsrc,,,,
+xresult,n10, ,0,0,0,x
+xresult,n30,,0,0,0,x
+xresult,n50,,0,0,0,x
+result,n100,323050,0,0,0,x
+result,n200,599090,0,0,0,x
+result,n300,757780,0,0,0,x
