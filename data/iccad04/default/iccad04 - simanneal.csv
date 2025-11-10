@@ -1,0 +1,20 @@
+suite,iccad04,default,,,,
+addtool,simanneal,url,Simulated annealing as implemented by ABKGroup at UCSD,,,
+addrelease,simanneal,1.0,,,,
+result,ibm01,2550000.00,0,0,0,x
+result,ibm02,5120000.00,0,0,0,x
+result,ibm03,7460000.00,0,0,0,x
+result,ibm04,8450000.00,0,0,0,x
+result,ibm06,6330000.00,0,0,0,x
+result,ibm07,12000000.00,0,0,0,x
+result,ibm08,14100000.00,0,0,0,x
+result,ibm09,13200000.00,0,0,0,x
+result,ibm10,37100000.00,0,0,0,x
+result,ibm11,20700000.00,0,0,0,x
+result,ibm12,40300000.00,0,0,0,x
+result,ibm13,27100000.00,0,0,0,x
+result,ibm14,43900000.00,0,0,0,x
+result,ibm15,50500000.00,0,0,0,x
+result,ibm16,65700000.00,0,0,0,x
+result,ibm17,76500000.00,0,0,0,x
+result,ibm18,43800000.00,0,0,0,x

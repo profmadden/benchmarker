@@ -1,0 +1,20 @@
+suite,iccad04,default,,,,,
+addtool,fengshui,url,Binghamton Feng Shui 5.1,,,,
+addrelease,fengshui,5.1,,,,,
+result,ibm01,2420000.00,0,0,0,0,x
+result,ibm02,5010000.00,0,0,0,0,x
+result,ibm03,8260000.00,0,0,0,0,x
+result,ibm04,8730000.00,0,0,0,0,x
+result,ibm06,6910000.00,0,0,0,0,x
+result,ibm07,11000000.00,0,0,0,0,x
+result,ibm08,13700000.00,0,0,0,0,x
+result,ibm09,13600000.00,0,0,0,0,x
+result,ibm10,33700000.00,0,0,0,0,x
+result,ibm11,19700000.00,0,0,0,0,x
+result,ibm12,35100000.00,0,0,0,0,x
+result,ibm13,23800000.00,0,0,0,0,x
+result,ibm14,38300000.00,0,0,0,0,x
+result,ibm15,50400000.00,0,0,0,0,x
+result,ibm16,58400000.00,0,0,0,0,x
+result,ibm17,70200000.00,0,0,0,0,x
+result,ibm18,45000000.00,0,0,0,0,x

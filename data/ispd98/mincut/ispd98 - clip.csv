@@ -1,0 +1,7 @@
+suite,ispd98,mincut,,,,
+addtool,clip,https://dl.acm.org/doi/10.5555/244522.244555,CLIP partitioner by Dutt & Deng; results from Alpert98,,,
+addrelease,clip,1,,,,
+result,ibm01,191,466,4.1,0,Taken from Alpert ISPD98
+result,ibm02,266,506,6.9,0,Taken from Alpert ISPD98
+result,ibm03,1150,2131,16.3,0,Taken from Alpert ISPD98
+result,ibm04,603,1105,14,0,Taken from Alpert ISPD98

@@ -1,0 +1,12 @@
+suite,iccad04,default,,,,,
+addtool,uplace,url,UPlace from UCSD,,,,
+addrelease,uplace,1.0,,,,,
+result,ibm01,2450000.00,0,0,0,0,x
+result,ibm02,5380000.00,0,0,0,0,x
+result,ibm03,7320000.00,0,0,0,0,x
+result,ibm04,8230000.00,0,0,0,0,x
+result,ibm06,6710000.00,0,0,0,0,x
+result,ibm07,11800000.00,0,0,0,0,x
+result,ibm08,13400000.00,0,0,0,0,x
+result,ibm09,14800000.00,0,0,0,0,x
+result,ibm10,35200000.00,0,0,0,0,x

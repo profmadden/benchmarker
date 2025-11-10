@@ -1,0 +1,20 @@
+suite,iccad04,default,,,,
+addtool,circuittraining,url,Circuit Training as implemented by ABKGroup at UCSD,,,
+addrelease,circuittraining,1.0,,,,
+result,ibm01,3370000.00,0,0,0,x
+result,ibm02,6280000.00,0,0,0,x
+result,ibm03,9350000.00,0,0,0,x
+result,ibm04,9780000.00,0,0,0,x
+result,ibm06,7100000.00,0,0,0,x
+result,ibm07,13100000.00,0,0,0,x
+result,ibm08,15700000.00,0,0,0,x
+result,ibm09,15700000.00,0,0,0,x
+result,ibm10,54700000.00,0,0,0,x
+result,ibm11,21600000.00,0,0,0,x
+result,ibm12,48200000.00,0,0,0,x
+result,ibm13,29700000.00,0,0,0,x
+result,ibm14,51300000.00,0,0,0,x
+result,ibm15,54600000.00,0,0,0,x
+result,ibm16,68700000.00,0,0,0,x
+result,ibm17,81900000.00,0,0,0,x
+result,ibm18,43100000.00,0,0,0,x
