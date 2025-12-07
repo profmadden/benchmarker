@@ -96,15 +96,14 @@ benchmarker/
 Our framework is migrating towards the use of comma separated variable (CSV) files to upload information into the database.  In practice, we use Google Sheets to store information in spreadsheet format, download this into CSV files, and then use the ``insert'' PHP script to load the database.
 
 * [ISPD 98 Partitioning](https://docs.google.com/spreadsheets/d/1O6a-6HFg7oP1yH5uqqEtBsuJes5RFQ3qYwFgHIidruY/edit?usp=sharing)
-* [GSRC Floorplanning](https://docs.google.com/spreadsheets/d/1gOGV0RiYXx1lfA-v
-tnSKYXmttr1itYvjCdNnX09dLnM/edit?usp=sharing)
+* [GSRC Floorplanning](https://docs.google.com/spreadsheets/d/1gOGV0RiYXx1lfA-vtnSKYXmttr1itYvjCdNnX09dLnM/edit?usp=sharing)
 * [ISPD 02 Mixed Size Placement](https://docs.google.com/spreadsheets/d/1ToR7_vw3R1v83WStppGkc2m4eNMGnJSm2Y6jYK3xH-w/edit?usp=sharing)
 * [ICCAD04 Mixed Size Placement](https://docs.google.com/spreadsheets/d/1WwkqwLQ7bkf4Jfz7gCxdItthnzfNtKJZiEt9CTxrEWY/edit?usp=sharing)
 * [ISPD 2020 Kernel Mapping](https://docs.google.com/spreadsheets/d/1gunjQep_KBZftdvUMkoMyXziroJj-QsD2e2nx0Q_Nvg/edit?usp=sharing)
 * [ISPD 2024 GPU-Enabled Global Routing](https://docs.google.com/spreadsheets/d/1aae-rNx-O8VzVFIUKu_ZxBL1bkWzMQFNc3bR4NzsVbg/edit?usp=sharing)
 
 
-### Web Interface
+### Web Interface (deprecated, may be eliminated)
 
 Access the web interface at `http://localhost/benchmarker/webTest/` to:
 
