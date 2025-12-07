@@ -1,6 +1,6 @@
 # Benchmarker
 
-A comprehensive placement benchmarking system for Electronic Design Automation (EDA) tools, designed to store, manage, and compare benchmark results from different circuit placement algorithms.
+A comprehensive placement benchmarking system for Electronic Design Automation (EDA) tools, designed to store, manage, and compare benchmark results.  A primary focus is on circuit placement, but the system has been designed to be generic; we would hope that the framework can be reused for other topic areas.
 
 ## Overview
 
@@ -9,18 +9,18 @@ The Benchmarker project provides a centralized platform for the EDA research com
 ## Features
 
 - **Database-driven benchmark repository** with MySQL backend
-- **Web interface** for viewing and managing benchmark data
-- **RESTful API** for automated result submission
 - **Support for multiple benchmark suites**: ICCAD04, ISPD98, ISPD2020, GSRC
 - **Multiple Figures of Merit (FOM)** tracking (HPWL, runtime, quality metrics)
 - **CSV-based data format** for easy version control and updates
 - **Token-based authentication** for secure API access
+- **Web interface** for viewing and managing benchmark data
+- **RESTful API** for automated result submission
 
 ## Project Structure
 
 ```
 benchmarker/
-├── data/                    # Benchmark data in CSV format
+├── data/                   # Benchmark data in CSV format
 │   ├── iccad04/            # ICCAD04 benchmark suite results
 │   ├── ispd98/             # ISPD98 benchmark suite results
 │   ├── ispd2020/           # ISPD2020 benchmark suite results
@@ -88,6 +88,13 @@ benchmarker/
    - Access via `http://localhost/benchmarker/webTest/`
 
 ## Usage
+
+### CSV Interface
+
+Our framework is migrating towards the use of comma separated variable (CSV) files to upload information into the database.  In practice, we use Google Sheets to store information in spreadsheet format, download this into CSV files, and then use the ``insert'' PHP script to load the database.
+
+* [ICCAD04 Google Sheet](https://docs.google.com/spreadsheets/d/1WwkqwLQ7bkf4Jfz7gCxdItthnzfNtKJZiEt9CTxrEWY/edit?usp=sharing)
+
 
 ### Web Interface
 
