@@ -1,11 +1,14 @@
 <?php
+// COPY THIS FILE to config.php
+// and then update the user name, password, and database as needed
 // ini_set('display_errors',1); error_reporting(E_ALL);
+
 
 $host = '127.0.0.1';   // or localhost
 $port = '3306';        // same as Workbench
-$user = 'root';
-$pass = 'root';   // <— put the real password
-$db   = 'suites_db';              // your schema
+$user = 'mysql_username';
+$pass = 'mysql_password';   // <— put the real password
+$db   = 'database_name';              // your schema
 
 $pdo = new PDO(
   "mysql:host=$host;port=$port;dbname=$db;charset=utf8mb4",
@@ -17,4 +20,5 @@ $pdo = new PDO(
     PDO::ATTR_EMULATE_PREPARES   => false,
   ]
 );
-// echo "Connected OK!";
+# echo "Connected OK!";
+?>
