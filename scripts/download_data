@@ -1,0 +1,18 @@
+#!/usr/bin/csh
+source ~/venv/bin/activate.csh
+
+echo GSRC Floorplan
+python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1gOGV0RiYXx1lfA-vtnSKYXmttr1itYvjCdNnX09dLnM/edit?gid=1605140027#gid=1605140027"
+echo ICCAD04
+python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1WwkqwLQ7bkf4Jfz7gCxdItthnzfNtKJZiEt9CTxrEWY/edit?gid=0#gid=0"
+echo ISPD02
+python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1ToR7_vw3R1v83WStppGkc2m4eNMGnJSm2Y6jYK3xH-w/edit?gid=0#gid=0"
+echo ISPD98
+python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1O6a-6HFg7oP1yH5uqqEtBsuJes5RFQ3qYwFgHIidruY/edit?gid=0#gid=0"
+echo ISPD2020
+python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1gunjQep_KBZftdvUMkoMyXziroJj-QsD2e2nx0Q_Nvg/edit?gid=0#gid=0"
+echo ISPD2024
+python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1aae-rNx-O8VzVFIUKu_ZxBL1bkWzMQFNc3bR4NzsVbg/edit?gid=0#gid=0"
+
+
+
