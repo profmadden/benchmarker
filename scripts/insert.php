@@ -1,6 +1,7 @@
 <?php
-require_once 'config.php';
-require_once '../webTest/lib/helpers.php';
+define('__ROOT__', dirname(__FILE__));
+require_once (__ROOT__ . '/config.php');
+require_once (__ROOT__ . '/../webTest/lib/helpers.php');
 
 function fetchSuiteId($pdo, $suite, $variant): int {
     $query = "SELECT suite_id from benchmarksuite where name='$suite' and variation='$variant';";
@@ -92,6 +93,7 @@ function parseCSV($pdo, $file, $suite_id, $tool_id, $tool_release_id)
                 }
                 if (($data[0] == "addbench") && ($num >= 4)) {
                     $query = "INSERT INTO benchmark (suite_id, name, url, text_description) VALUES ($suite_id,'$data[1]','$data[2]','$data[3]');";
+		    print("Insert benchmark query $query");
                     $r     = $pdo->query($query);
                 }
                 if (($data[0] == "addtool") && ($num >= 4)) {
@@ -101,11 +103,13 @@ function parseCSV($pdo, $file, $suite_id, $tool_id, $tool_release_id)
                        $r    = $pdo->query($query); 
                     }
                     $tool_id = fetchToolId($pdo, $data[1]);
+		    print("Tool ID for addtool $data[1] is $tool_id");
                 }
                 if (($data[0] == "addrelease") && ($num >= 3)) {
                     $tool_release_id = fetchToolReleaseId($pdo,$data[1],$data[2]);
                     if ($tool_release_id == -1) {
                         $query = "INSERT INTO toolrelease (tool_id, name, tool_release_version) VALUES ($tool_id,'$data[1]','$data[2]');";
+			print("Add release $query");
                         $r     = $pdo->query($query);
                         $query = "SELECT tool_id from toolrelease where name='$data[1]' and tool_release_version='$data[2]'";
                         $r     = $pdo->query($query);

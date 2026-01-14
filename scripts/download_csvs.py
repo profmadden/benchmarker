@@ -166,7 +166,7 @@ def download_csvs(sheet_url: str, out_dir: Path, auto_commit: bool) -> None:
     # Remaining sheets
     for tab in tab_titles[1:]:
         tab_safe = sanitize(tab)
-        out_path = out_dir / first_safe / "default" / f"{first_safe} - {tab_safe}.csv"
+        out_path = out_dir / first_safe / f"{tab_safe}.csv"
         write_csv(fetch(tab), out_path)
 
     print("CSV download complete.")
