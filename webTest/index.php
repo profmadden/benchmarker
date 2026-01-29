@@ -57,7 +57,7 @@ $all_suites = suites($pdo);
 </head>
 <body>
 
-<h1>Suites & Benchmarks</h1>
+<h1>Benchmarker Experimental Results</h1>
 <div class="nav">
   <?php
     foreach ([

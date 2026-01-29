@@ -1,21 +1,21 @@
-addsuite,iccad04,default,url,url,hpwl,time,na,na,ICCAD04 mixed size placement
-addbench,ibm01,url,12506 cells,,,,,,
-addbench,ibm02,url,12506 cells,,,,,,
-addbench,ibm03,url,12506 cells,,,,,,
-addbench,ibm04,url,12506 cells,,,,,,
-addbench,ibm05,url,12506 cells,,,,,,
-addbench,ibm06,url,12506 cells,,,,,,
-addbench,ibm07,url,12506 cells,,,,,,
-addbench,ibm08,url,12506 cells,,,,,,
-addbench,ibm09,url,12506 cells,,,,,,
-addbench,ibm10,url,12506 cells,,,,,,
-addbench,ibm11,url,12506 cells,,,,,,
-addbench,ibm12,url,12506 cells,,,,,,
-addbench,ibm13,url,12506 cells,,,,,,
-addbench,ibm14,url,12506 cells,,,,,,
-addbench,ibm15,url,12506 cells,,,,,,
-addbench,ibm16,url,12506 cells,,,,,,
-addbench,ibm17,url,12506 cells,,,,,,
-addbench,ibm18,url,12506 cells,,,,,,
+addsuite,iccad04,default,https://ieeexplore.ieee.org/document/1382639,http://vlsicad.eecs.umich.edu/BK/PlaceUtils/,hpwl,time,na,na,ICCAD04 mixed size placement
+addbench,ibm01,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,12652 cells
+addbench,ibm02,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,19584 cells
+addbench,ibm03,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,27322 cells
+addbench,ibm04,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,27220 cells
+addbench,ibm05,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,28146 cells
+addbench,ibm06,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,34826 cells
+addbench,ibm07,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,40598 cells
+addbench,ibm08,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,48268 cells
+addbench,ibm09,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,50393 cells
+addbench,ibm10,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,58014 cells
+addbench,ibm11,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,70558 cells
+addbench,ibm12,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,77240 cells
+addbench,ibm13,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,83252 cells
+addbench,ibm14,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,85952 cells
+addbench,ibm15,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,101150 cells
+addbench,ibm16,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,108172 cells
+addbench,ibm17,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,138290 cells
+addbench,ibm18,http://vlsicad.eecs.umich.edu/BK/ICCAD04bench/,"Mixed size benchmark based on ISPD98 benchmarks, in the ICCAD04 suite",,,,,,210612 cells
 ,,,,,,,,,
 importdir,iccad04/default,,,,,,,,

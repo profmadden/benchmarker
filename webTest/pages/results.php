@@ -510,7 +510,7 @@ $last_flag_id = isset($_GET['last_flag_id']) ? (int)$_GET['last_flag_id'] : 0;
     $uFlags   = $base.'&tab=flags';
   ?>
   <a class="btn <?= $active_tab==='results'?'':'alt' ?>" href="<?=$h($uResults)?>">Results</a>
-  <a class="btn <?= $active_tab==='flags'  ?'':'alt' ?>" href="<?=$h($uFlags)?>">Flags (<?=$h($flags_total)?>)</a>
+<!--  <a class="btn <?= $active_tab==='flags'  ?'':'alt' ?>" href="<?=$h($uFlags)?>">Flags (<?=$h($flags_total)?>)</a> -->
 </div>
 
 <?php if ($active_tab==='flags'): ?>
@@ -724,9 +724,6 @@ $last_flag_id = isset($_GET['last_flag_id']) ? (int)$_GET['last_flag_id'] : 0;
     </tbody>
   </table>
 
-  <div style="margin-top:12px;">
-    <button type="submit" class="btn">Bulk Save Flags</button>
-  </div>
 </form>
 <?php endif; ?>
 <?php endif; ?>

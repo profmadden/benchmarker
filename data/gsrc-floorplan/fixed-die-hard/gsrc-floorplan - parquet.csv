@@ -1,9 +1,0 @@
-suite,gsrc-floorplan,fixed-die-hard,,,,
-addtool,parquet,https://ieeexplore.ieee.org/document/1255486,Parquet floorplanner,,,
-addrelease,parquet,gsrc,,,,
-xresult,n10, ,0,0,0,x
-xresult,n30,,0,0,0,x
-xresult,n50,,0,0,0,x
-result,n100,343500,0,0,0,x
-result,n200,653990,0,0,0,x
-result,n300,798570,0,0,0,x

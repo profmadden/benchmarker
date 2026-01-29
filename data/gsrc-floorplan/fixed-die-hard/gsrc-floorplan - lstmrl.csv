@@ -1,9 +1,0 @@
-suite,gsrc-floorplan,fixed-die-hard,,,,
-addtool,lstmrl,https://doi.org/10.1109/tcad.2024.3436013,LSTM List RL floorplanner,,,
-addrelease,lstmrl,gsrc,,,,
-xresult,n10, ,0,0,0,Reported experimental results have not been validated.
-xresult,n30,,0,0,0,Reported experimental results have not been validated.
-xresult,n50,,0,0,0,Reported experimental results have not been validated.
-result,n100,306167,0,0,0,Reported experimental results have not been validated.
-result,n200,329849,0,0,0,Reported experimental results have not been validated.
-result,n300,443586,0,0,0,Reported experimental results have not been validated.
