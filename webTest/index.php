@@ -25,7 +25,7 @@ $all_suites = suites($pdo);
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Suites DB</title>
+  <title>Benchmarker Experimental Results</title>
   <style>
     body { font-family: system-ui, -apple-system, Arial, sans-serif; margin: 24px; }
     h1 { margin: 0 0 12px; }
@@ -72,6 +72,8 @@ $all_suites = suites($pdo);
     endforeach;
   ?>
 </div>
+
+<a href="about.html">Information about this website</a>
 
 <?php if($flash): ?><div class="flash ok"><?=h($flash)?></div><?php endif; ?>
 <?php if($flash_err): ?><div class="flash err"><?=h($flash_err)?></div><?php endif; ?>
