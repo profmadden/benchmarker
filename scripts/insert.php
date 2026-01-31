@@ -119,7 +119,7 @@ function parseCSV($pdo, $file, $suite_id, $tool_id, $tool_release_id)
                 }
                 if ($data[0] == "result") {
                     $benchmark_id =fetchBenchmarkId($pdo, $suite_id, $data[1]);
-                    $query = "INSERT INTO result (tool_id,tool_release_id,suite_id,benchmark_id,fom1,fom2,fom3,fom4,text_description) VALUE ($tool_id,$tool_release_id,$suite_id,$benchmark_id,$data[2],$data[3],$data[4],$data[5],\"$data[6]\");";
+                    $query = "INSERT INTO result (tool_id,tool_release_id,suite_id,benchmark_id,fom1,fom2,fom3,fom4,text_description,URL) VALUE ($tool_id,$tool_release_id,$suite_id,$benchmark_id,$data[2],$data[3],$data[4],$data[5],\"$data[6]\",\"$data[7]\");";
                     print("RESULT query $query\n");
                     $r = $pdo->query($query);
                 }

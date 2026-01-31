@@ -675,7 +675,11 @@ $last_flag_id = isset($_GET['last_flag_id']) ? (int)$_GET['last_flag_id'] : 0;
               ?>
               <td class="mono fom-cell">
                 <?php if ($val !== ''): ?>
-                  <a href="<?=$h($rurl)?>" target="_blank" class="fom-link"><?=$h($val)?></a>
+		  <?php if (strlen($rurl) < 4): ?>
+		   <?=$h($val) ?>
+		  <?php else: ?>
+                    <a href="<?=$h($rurl)?>" target="_blank" class="fom-link"><?=$h($val)?></a>
+		  <?php endif; ?>
                   <span class="info-icon" data-desc="<?=$h($desc)?>" title="<?=$h($desc)?>">&#9432;</span>
                 <?php else: ?>
                   <span class="placeholder">—</span>
