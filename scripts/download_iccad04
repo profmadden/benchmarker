@@ -1,0 +1,6 @@
+#!/usr/bin/csh
+source ~/venv/bin/activate.csh
+
+echo ICCAD04
+python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1WwkqwLQ7bkf4Jfz7gCxdItthnzfNtKJZiEt9CTxrEWY/edit?gid=0#gid=0"
+

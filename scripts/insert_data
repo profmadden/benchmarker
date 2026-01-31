@@ -1,0 +1,6 @@
+#!/bin/tcsh
+pushd data
+foreach X (*.csv)
+echo Inserting $X
+php ../insert.php $X
+end
