@@ -108,7 +108,12 @@ function parseCSV($pdo, $file, $suite_id, $tool_id, $tool_release_id)
                 if (($data[0] == "addrelease") && ($num >= 3)) {
                     $tool_release_id = fetchToolReleaseId($pdo,$data[1],$data[2]);
                     if ($tool_release_id == -1) {
-                        $query = "INSERT INTO toolrelease (tool_id, name, tool_release_version) VALUES ($tool_id,'$data[1]','$data[2]');";
+		        $date = "2001-01-01";
+		        if ($num >= 4) {
+			  $date = $data[3];
+			}
+			
+                        $query = "INSERT INTO toolrelease (tool_id, name, tool_release_version, date) VALUES ($tool_id,'$data[1]','$data[2]', '$date');";
 			print("Add release $query");
                         $r     = $pdo->query($query);
                         $query = "SELECT tool_id from toolrelease where name='$data[1]' and tool_release_version='$data[2]'";
