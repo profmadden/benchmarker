@@ -1,6 +1,8 @@
 #!/bin/tcsh
-pushd data
-foreach X (*.csv)
+# Clear out any tables in the DB
+php reset.php
+# Insert all of the benchmark info in the data subdirectory
+foreach X (data/*.csv)
 echo Inserting $X
-php ../insert.php $X
+php insert.php $X
 end

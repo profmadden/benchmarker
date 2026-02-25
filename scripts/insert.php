@@ -136,13 +136,15 @@ function parseCSV($pdo, $file, $suite_id, $tool_id, $tool_release_id)
                     parseCSV($pdo, $data[1], $suite_id, $tool_id, $tool_release_id);
                 }
                 if ($data[0] == "importdir") {
-                    if ($handle2 = opendir($data[1])) {
+		    $fpath = dirname($file) . "/" . $data[1];
+		    print("Real path to dir is " . $fpath);
+                    if ($handle2 = opendir($fpath)) {
                         while (false != ($entry = readdir($handle2))) {
-                            print("Operate on file $data[1]/$entry\n");
-                            $ext = pathinfo($data[1] . $entry, PATHINFO_EXTENSION);
+                            print("Operate on file $fpath/$entry\n");
+                            $ext = pathinfo($fpath . "/" . $entry, PATHINFO_EXTENSION);
                             if ($ext == "csv") {
                                 print("  This is a CSV file\n");
-                                parseCSV($pdo, $data[1] . "/" . $entry, $suite_id, $tool_id, $tool_release_id);
+                                parseCSV($pdo, $fpath . "/" . $entry, $suite_id, $tool_id, $tool_release_id);
                             }
                         }
                         closedir($handle2);

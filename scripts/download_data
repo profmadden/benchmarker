@@ -1,6 +1,8 @@
 #!/usr/bin/csh
 source ~/venv/bin/activate.csh
 
+echo ISPD05
+python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1nz8-r8UhtUGvbkexGXmF0LBd7SKZUNPqs3e2MPvi494/edit?gid=1002769353#gid=1002769353"
 echo GSRC Floorplan
 python3 download_csvs.py "https://docs.google.com/spreadsheets/d/1gOGV0RiYXx1lfA-vtnSKYXmttr1itYvjCdNnX09dLnM/edit?gid=1605140027#gid=1605140027"
 echo ICCAD04
