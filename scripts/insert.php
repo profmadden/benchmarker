@@ -1,7 +1,7 @@
 <?php
 define('__ROOT__', dirname(__FILE__));
 require_once (__ROOT__ . '/config.php');
-require_once (__ROOT__ . '/../webTest/lib/helpers.php');
+require_once (__ROOT__ . '/../web/lib/helpers.php');
 
 function fetchSuiteId($pdo, $suite, $variant): int {
     $query = "SELECT suite_id from benchmarksuite where name='$suite' and variation='$variant';";
